@@ -1,9 +1,9 @@
-import { apiCall } from "@/lib/axiosClient";
+import axiosClient from "@/lib/axiosClient";
 import type { Partner } from "@/types";
 
 export const getPartners = async (): Promise<Partner[]> => {
   try {
-    const response = await apiCall.get("/api/partners");
+    const response = await axiosClient.get("/api/partners");
 
     if (response.data.success && Array.isArray(response.data.data)) {
       const mappedPartners = response.data.data.map((partner: any) => ({

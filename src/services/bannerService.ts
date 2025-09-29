@@ -1,4 +1,4 @@
-import { apiCall } from "@/lib/axiosClient";
+import axiosClient from "@/lib/axiosClient";
 import type { Banner } from "@/types";
 
 interface ApiBanner {
@@ -12,7 +12,7 @@ interface ApiBanner {
 
 export const getBanners = async (): Promise<Banner[]> => {
   try {
-    const response = await apiCall.get("/api/banners");
+    const response = await axiosClient.get("/api/banners");
 
     if (response.data.success && Array.isArray(response.data.data)) {
       const mappedBanners = response.data.data.map((banner: ApiBanner) => ({
@@ -25,7 +25,7 @@ export const getBanners = async (): Promise<Banner[]> => {
         isActive: true, // API does not provide isActive, assume true
       }));
       
-      const sortedBanners = mappedBanners.sort((a, b) => a.order - b.order);
+      const sortedBanners = mappedBanners.sort((a: any, b: any) => a.order - b.order);
       return sortedBanners;
     } else {
       throw new Error("API không trả dữ liệu hợp lệ");

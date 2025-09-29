@@ -16,7 +16,7 @@ export const store = configureStore({
     }),
 });
 
-setupAxiosInterceptors(store);
+setupAxiosInterceptors(store); // ✅ store.dispatch đã là AppDispatch
 
 export type RootState = ReturnType<typeof store.getState>;
 export type AppDispatch = typeof store.dispatch;

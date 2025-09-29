@@ -1,6 +1,8 @@
-import { apiCall } from "@/lib/axiosClient";
 
 // This function transforms the raw key-value array from the API 
+
+import axiosClient from "@/lib/axiosClient";
+
 // into a more usable structured object.
 const transformSettings = (settings: { key: string; value: string }[]) => {
   const settingsObject: { [key: string]: any } = {};
@@ -22,7 +24,7 @@ const transformSettings = (settings: { key: string; value: string }[]) => {
 
 export const getSettings = async () => {
   try {
-    const response = await apiCall.get("/api/settings");
+    const response = await axiosClient.get("/api/settings");
 
     if (response.data.success && Array.isArray(response.data.data)) {
       return transformSettings(response.data.data);
