@@ -1,15 +1,12 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { M_PLUS_1p } from "next/font/google";
 import "./globals.css";
+import { StoreProvider } from "@/store/StoreProvider";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
+const mplus1p = M_PLUS_1p({
+  subsets: ["latin", "vietnamese"],
+  weight: ["400", "500", "700"],
+  display: "swap",
 });
 
 export const metadata: Metadata = {
@@ -24,10 +21,8 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-      >
-        {children}
+      <body className={mplus1p.className} suppressHydrationWarning>
+        <StoreProvider>{children}</StoreProvider>
       </body>
     </html>
   );

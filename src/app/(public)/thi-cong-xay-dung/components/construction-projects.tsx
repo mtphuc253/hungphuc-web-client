@@ -1,0 +1,97 @@
+'use client'
+
+import { useState, useEffect } from 'react'
+import { Pagination } from '../../components/pagination'
+import { projectService } from '@/services/projectService'
+import { IProject, ApiMeta } from '@/types'
+import { ProjectCard } from '../../components/project-card'
+import { ProjectFilters } from '../../components/project-filters'
+
+const CONSTRUCTION_SUBATEGORIES = ['Nhà phố', 'Biệt thự', 'Nhà xưởng', 'Văn phòng', 'Khách sạn'] as const
+
+interface ConstructionProjectsProps {
+  initialProjects: IProject[];
+  initialMeta: ApiMeta | null;
+}
+
+export function ConstructionProjects({ initialProjects, initialMeta }: ConstructionProjectsProps) {
+  const [projects, setProjects] = useState<IProject[]>(initialProjects)
+  const [meta, setMeta] = useState<ApiMeta | null>(initialMeta)
+  const [loading, setLoading] = useState(false)
+  const [currentPage, setCurrentPage] = useState(1)
+  const [selectedSubcategory, setSelectedSubcategory] = useState<string | null>(null)
+
+  useEffect(() => {
+    if (currentPage === 1 && selectedSubcategory === null) {
+      setProjects(initialProjects);
+      setMeta(initialMeta);
+      return;
+    }
+
+    const fetchProjects = async () => {
+      setLoading(true)
+      try {
+        const response = await projectService.getProjects({
+          page: currentPage,
+          limit: 9,
+          category: 'construction',
+          subcategory: selectedSubcategory || '',
+        })
+        setProjects(response.data)
+        if (response.meta) {
+          setMeta(response.meta)
+        }
+      } catch (error) {
+        console.error('Failed to fetch projects:', error)
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    fetchProjects()
+  }, [currentPage, selectedSubcategory, initialMeta, initialProjects])
+
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page)
+    window.scrollTo(0, 0)
+  }
+
+  const handleFilterChange = (subcategory: string | null) => {
+    setSelectedSubcategory(subcategory)
+    setCurrentPage(1)
+  }
+
+  return (
+    <>
+      <div className="mb-12">
+        <ProjectFilters
+          subcategories={CONSTRUCTION_SUBATEGORIES}
+          selectedSubcategory={selectedSubcategory}
+          onSelectSubcategory={handleFilterChange}
+        />
+      </div>
+
+      {loading ? (
+        <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
+          {Array.from({ length: 9 }).map((_, index) => (
+            <div key={index} className="h-96 animate-pulse rounded-lg bg-gray-200"></div>
+          ))}
+        </div>
+      ) : projects.length > 0 ? (
+        <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
+          {projects.map((project) => (
+            <ProjectCard key={project.id} project={project} />
+          ))}
+        </div>
+      ) : (
+        <div className="py-16 text-center">
+          <p className="text-lg text-gray-500">Không tìm thấy dự án nào phù hợp.</p>
+        </div>
+      )}
+
+      {meta && meta.totalPages > 1 && (
+        <Pagination currentPage={currentPage} totalPages={meta.totalPages} onPageChange={handlePageChange} />
+      )}
+    </>
+  )
+}
