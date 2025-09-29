@@ -3,7 +3,9 @@ import { refreshTokenAsync, clearCredentials } from "@/store/slices/authSlice";
 import type { EnhancedStore } from "@reduxjs/toolkit";
 
 // const BASE_URL = "http://localhost:8017";
-const BASE_URL = "https://hungphuc-web-server-1.onrender.com";
+// const BASE_URL = "https://hungphuc-web-server-1.onrender.com"; //render
+const BASE_URL = "https://hungphuc-web-server-production.up.railway.app/"; //railway
+
 
 // Create axios instance
 const axiosClient: AxiosInstance = axios.create({
