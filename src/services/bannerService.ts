@@ -1,12 +1,21 @@
 import { apiCall } from "@/lib/axiosClient";
 import type { Banner } from "@/types";
 
+interface ApiBanner {
+  id: number;
+  title: string;
+  description?: string;
+  image_url: string;
+  link_url?: string;
+  order_index: number;
+}
+
 export const getBanners = async (): Promise<Banner[]> => {
   try {
     const response = await apiCall.get("/api/banners");
 
     if (response.data.success && Array.isArray(response.data.data)) {
-      const mappedBanners = response.data.data.map((banner: any) => ({
+      const mappedBanners = response.data.data.map((banner: ApiBanner) => ({
         id: banner.id,
         title: banner.title,
         description: banner.description || "",

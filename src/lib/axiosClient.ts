@@ -1,6 +1,7 @@
 import axios, { type AxiosInstance, type AxiosResponse } from "axios";
 import { refreshTokenAsync, clearCredentials } from "@/store/slices/authSlice";
-import type { EnhancedStore } from "@reduxjs/toolkit";
+import type { EnhancedStore, AnyAction } from "@reduxjs/toolkit";
+import { RootState } from "@/store";
 
 // const BASE_URL = "http://localhost:8017";
 // const BASE_URL = "https://hungphuc-web-server-1.onrender.com"; //render
@@ -19,7 +20,7 @@ const axiosClient: AxiosInstance = axios.create({
 export const setupAxiosInterceptors = (store: EnhancedStore) => {
   axiosClient.interceptors.request.use(
     (config) => {
-      const state = store.getState() as any; // Use any to avoid type issues with RootState
+      const state = store.getState() as RootState; // Use any to avoid type issues with RootState
       const accessToken = state.auth.accessToken;
 
       if (accessToken) {
@@ -43,7 +44,7 @@ export const setupAxiosInterceptors = (store: EnhancedStore) => {
         originalRequest._retry = true;
 
         try {
-          const result: any = await store.dispatch(refreshTokenAsync());
+          const result = await store.dispatch(refreshTokenAsync());
 
           if (refreshTokenAsync.fulfilled.match(result)) {
             const newAccessToken = result.payload.accessToken;
