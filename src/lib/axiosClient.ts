@@ -1,14 +1,11 @@
-import axios, { type AxiosInstance, type AxiosResponse } from "axios";
+import type { AppDispatch, RootState } from "@/store";
+import type { AxiosInstance, AxiosResponse } from "axios";
+import axios from "axios";
 import { refreshTokenAsync, clearCredentials } from "@/store/slices/authSlice";
-import type { EnhancedStore, AnyAction } from "@reduxjs/toolkit";
-import { RootState } from "@/store";
-
-// const BASE_URL = "http://localhost:8017";
-// const BASE_URL = "https://hungphuc-web-server-1.onrender.com"; //render
-const BASE_URL = "https://hungphuc-web-server-production.up.railway.app/"; //railway
-
 
 // Create axios instance
+const BASE_URL = "https://hungphuc-web-server-production.up.railway.app/";
+
 const axiosClient: AxiosInstance = axios.create({
   baseURL: BASE_URL,
   timeout: 10000,
@@ -17,10 +14,10 @@ const axiosClient: AxiosInstance = axios.create({
   },
 });
 
-export const setupAxiosInterceptors = (store: EnhancedStore) => {
+export const setupAxiosInterceptors = (store: { dispatch: AppDispatch; getState: () => RootState }) => {
   axiosClient.interceptors.request.use(
     (config) => {
-      const state = store.getState() as RootState; // Use any to avoid type issues with RootState
+      const state = store.getState();
       const accessToken = state.auth.accessToken;
 
       if (accessToken) {
@@ -28,15 +25,11 @@ export const setupAxiosInterceptors = (store: EnhancedStore) => {
       }
       return config;
     },
-    (error) => {
-      return Promise.reject(error);
-    }
+    (error) => Promise.reject(error)
   );
 
   axiosClient.interceptors.response.use(
-    (response: AxiosResponse) => {
-      return response;
-    },
+    (response: AxiosResponse) => response,
     async (error) => {
       const originalRequest = error.config;
 
@@ -53,9 +46,7 @@ export const setupAxiosInterceptors = (store: EnhancedStore) => {
           }
         } catch (refreshError) {
           store.dispatch(clearCredentials());
-          if (typeof window !== "undefined") {
-            window.location.href = "/login";
-          }
+          if (typeof window !== "undefined") window.location.href = "/login";
           return Promise.reject(refreshError);
         }
       }
@@ -66,13 +57,3 @@ export const setupAxiosInterceptors = (store: EnhancedStore) => {
 };
 
 export default axiosClient;
-export const apiCall = axiosClient;
-
-export const setAccessToken = (token: string | null) => {
-  console.warn("setAccessToken is deprecated. Use Redux actions instead.");
-};
-
-export const getAccessToken = () => {
-  console.warn("getAccessToken is deprecated. Use Redux selector instead. This function will not work correctly after the refactor.");
-  return null;
-};
