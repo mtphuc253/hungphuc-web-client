@@ -21,6 +21,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
+      <head>
+        <link rel="icon" href="/logo-hungphuc.png" />
+      </head>
       <body className={mplus1p.className} suppressHydrationWarning>
         <StoreProvider>{children}</StoreProvider>
       </body>
