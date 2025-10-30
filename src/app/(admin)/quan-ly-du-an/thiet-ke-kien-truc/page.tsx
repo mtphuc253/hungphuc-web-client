@@ -14,7 +14,7 @@ async function ProjectData() {
   return (
     <ArchitectureProjectList
       initialProjects={initialData.data}
-      initialMeta={initialData.meta}
+      initialMeta={initialData.meta ?? null}
     />
   );
 }
