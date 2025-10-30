@@ -1,11 +1,9 @@
-// lib/axiosPublic.ts
-import axios from "axios";
-
-const BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
+import axios from 'axios';
 
 const axiosPublic = axios.create({
-  baseURL: typeof window === "undefined" ? BASE_URL : "",
-  // server dùng BASE_URL tuyệt đối, client để trống dùng relative path
+  baseURL: process.env.NEXT_PUBLIC_API_URL,
+  headers: { 'Content-Type': 'application/json' },
+  // withCredentials: true,
 });
 
 export default axiosPublic;
