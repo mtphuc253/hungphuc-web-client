@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { getSettings, deleteSetting, createSetting } from "@/services/settingsService";
+import { getSettings, deleteSetting, createSetting, getSettingsPrive } from "@/services/settingsService";
 import type { Setting } from "@/types";
 import { Button } from "@/components/ui/button";
 import {
@@ -45,8 +45,10 @@ const CustomizationForm = () => {
   useEffect(() => {
     const fetchSettings = async () => {
       try {
-        const data = await getSettings();
-        setSettings(data);
+        const data = await getSettingsPrive();
+        setSettings(data.data);
+
+
       } catch (error) {
         console.error("Failed to fetch settings:", error);
         toast.error("Lấy cài đặt thất bại");
@@ -331,7 +333,7 @@ const CustomizationForm = () => {
             </Card>
           ))}
         </div>
-      ) : settings.length === 0 ? (
+      ) : settings?.length === 0 ? (
         <Card className="border-2 border-dashed">
           <CardContent className="flex flex-col items-center justify-center py-16">
             <FileText className="h-12 w-12 text-muted-foreground mb-4" />

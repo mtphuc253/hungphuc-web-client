@@ -5,7 +5,12 @@ import { ApiResponse, Setting } from "@/types"
 
 export const getSettings = async (): Promise<ApiResponse<Setting[]>> => {
   const response = await axiosPublic.get('/api/settings')
-  return response.data.data; 
+  return response.data.data
+}
+
+export const getSettingsPrive = async (): Promise<ApiResponse<Setting[]>> => {
+  const response = await axiosPublic.get('/api/settings')
+  return response.data
 }
 
 export const deleteSetting = async (key: string) => {
