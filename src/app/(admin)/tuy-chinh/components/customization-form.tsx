@@ -197,7 +197,7 @@ const CustomizationForm = () => {
             <div className="space-y-1">
               <CardTitle className="text-2xl">Thông tin công ty</CardTitle>
               <CardDescription className="text-base">
-                Xem và quản lý các cài đặt hệ thống
+                Quản lý các cài đặt hệ thống
               </CardDescription>
             </div>
 
