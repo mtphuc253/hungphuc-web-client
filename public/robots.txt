@@ -1,0 +1,9 @@
+# *
+User-agent: *
+Allow: /
+
+# Host
+Host: https://hungphuc.vercel.app
+
+# Sitemaps
+Sitemap: https://hungphuc.vercel.app/sitemap.xml

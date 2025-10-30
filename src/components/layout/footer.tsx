@@ -9,7 +9,15 @@ import { MapPin, Phone, Mail, ArrowUpRight } from "lucide-react"
 import Script from "next/script"
 
 export function Footer() {
-  const settings = useSelector((state: RootState) => state.settings.settings)
+  const settingsArray = useSelector((state: RootState) => state.settings.settings)
+
+  const settings = Array.isArray(settingsArray)
+    ? settingsArray.reduce((acc: Record<string, string>, item: any) => {
+      acc[item.key] = item.value
+      return acc
+    }, {})
+    : settingsArray
+
 
   const quickLinks = PUBLIC_NAV_ITEMS.slice(0, 5)
   const operationLinks = [
@@ -85,13 +93,14 @@ export function Footer() {
             <div className="space-y-8 lg:col-span-1">
               <Link href="/" className="inline-block group" aria-label="Về trang chủ Hưng Phúc">
                 <div className="relative overflow-hidden rounded-lg bg-white backdrop-blur-sm p-4 transition-all duration-300 group-hover: group-hover:scale-105">
-                  <Image
-                    src="https://res.cloudinary.com/dizk1uwv3/image/upload/v1758561417/Hungphuc/logo-hung-phuc-ngang.png"
-                    alt="Hưng Phúc Logo"
-                    width={200}
-                    height={64}
-                    priority
-                  />
+                    <Image
+                      src="https://res.cloudinary.com/dizk1uwv3/image/upload/v1758561417/Hungphuc/logo-hung-phuc-ngang.png"
+                      alt="Hưng Phúc Logo"
+                      width={200}
+                      height={64}
+                      priority
+                      style={{ width: '100%', height: 'auto' }}
+                    />
                 </div>
               </Link>
 

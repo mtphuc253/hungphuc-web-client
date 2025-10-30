@@ -24,8 +24,10 @@ export function Header() {
               alt="HUNG PHUC Logo"
               width={248}
               height={80}
+              style={{ width: '100%', height: 'auto' }}
               priority
             />
+
           </Link>
 
           {/* Desktop Navigation */}

@@ -88,6 +88,32 @@ export interface ContactFormPayload {
   message: string;
 }
 
+export type ContactStatus = "new" | "in_progress" | "resolved" | "archived"
+
+export interface ContactLog {
+  id: string
+  contact_id: string
+  user_id: string
+  note: string
+  created_at: string
+  user_name: string
+  user_email: string
+}
+
+export interface Contact {
+  id: string
+  name: string
+  email: string
+  phone: string
+  address: string
+  message: string
+  status: ContactStatus
+  is_viewed_by_me: boolean
+  created_at: string
+  updated_at: string
+  logs: ContactLog[]
+}
+
 export interface ApiListResponse<T = any> extends ApiResponse<T[]> {
   meta?: {
     page: number;
@@ -169,4 +195,29 @@ export interface IProject {
   client_name?: string;
   featured_image: string;
   images: IProjectImage[];
+}
+
+// Payloads for Redux actions
+export interface LoginSuccessPayload {
+  user: User;
+  accessToken: string;
+}
+
+export interface RefreshTokenSuccessPayload {
+  accessToken: string;
+}
+
+export interface NavItem {
+  title: string;
+  href?: string;
+  disabled?: boolean;
+  external?: boolean;
+}
+
+export interface Setting {
+  id: string;
+  key: string;
+  value: string;
+  created_at: string;
+  updated_at: string;
 }

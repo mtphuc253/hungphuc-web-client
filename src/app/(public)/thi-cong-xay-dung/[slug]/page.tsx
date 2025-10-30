@@ -1,4 +1,4 @@
-
+// src/app/thiet-ke-kien-truc/[slug]/page.tsx
 import { projectService } from '@/services/projectService'
 import { formatDate } from '@/lib/utils'
 import { notFound } from 'next/navigation'
@@ -10,25 +10,27 @@ import { SectionTitle } from '@/components/ui/section-title'
 import { Badge } from '@/components/ui/badge'
 import { Calendar, MapPin, Building, Tag } from 'lucide-react'
 
-type Props = {
-  params: { slug: string }
+type Params = { slug: string }
+
+async function resolveParams(params: Params | Promise<Params>): Promise<Params> {
+  return params instanceof Promise ? await params : params
 }
 
-export async function generateMetadata({ params }: Props): Promise<Metadata> {
+export async function generateMetadata({ params }: { params: Params | Promise<Params> }): Promise<Metadata> {
+  const { slug } = await resolveParams(params)
+
   try {
-    const { data: project } = await projectService.getProjectBySlug(params.slug)
+    const { data: project } = await projectService.getProjectBySlug(slug)
     if (!project) {
-      return {
-        title: 'Dự án không tồn tại',
-      }
+      return { title: 'Dự án không tồn tại' }
     }
+
     const categoryPath = project.category === 'construction' ? 'thi-cong-xay-dung' : 'thiet-ke-kien-truc'
+
     return {
       title: project.meta_title || project.title,
       description: project.meta_description || project.description,
-      alternates: {
-        canonical: `/${categoryPath}/${project.slug}`,
-      },
+      alternates: { canonical: `/${categoryPath}/${project.slug}` },
     }
   } catch (error) {
     console.error('[generateMetadata]', error)
@@ -39,17 +41,15 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   }
 }
 
-export default async function ProjectDetailPage({ params }: Props) {
-  const { slug } = params
-  const { data: project } = await projectService.getProjectBySlug(slug)
+export default async function ProjectDetailPage({ params }: { params: Params | Promise<Params> }) {
+  const { slug } = await resolveParams(params)
 
-  if (!project) {
-    notFound()
-  }
+  const { data: project } = await projectService.getProjectBySlug(slug)
+  if (!project) notFound()
 
   const [relatedProjectsRes, latestProjectsRes] = await Promise.all([
     projectService.getProjects({ subcategory: project.subcategory, limit: 6 }),
-    projectService.getProjects({ category: 'construction', limit: 4 }),
+    projectService.getProjects({ category: 'architecture', limit: 4 }),
   ])
 
   const relatedProjects = relatedProjectsRes.data.filter((p) => p.slug !== project.slug)
@@ -72,7 +72,7 @@ export default async function ProjectDetailPage({ params }: Props) {
     <main className="py-12 sm:py-16 bg-gray-50/50">
       <div className="container mx-auto px-4">
         <header className="mb-8 text-left">
-          <h1 className="text-3xl md:text-4xl lg:text-5xl font-extrabold text-gray-900 mb-4 leading-tight text-left">
+          <h1 className="text-3xl md:text-4xl lg:text-5xl font-extrabold text-gray-900 mb-4 leading-tight">
             {project.title}
           </h1>
           <p className="text-lg text-gray-600 text-left">{project.description}</p>
@@ -167,9 +167,9 @@ export default async function ProjectDetailPage({ params }: Props) {
 
           {/* Sidebar */}
           <aside className="w-full lg:w-1/3">
-            <div className="sticky top-36 space-y-16">
+            <div className="sticky top-36 space-y-4">
               {relatedProjects.length > 0 && (
-                <div className=''>
+                <div className='-mt-9'>
                   <SectionTitle>Dự án liên quan</SectionTitle>
                   <div className="mt-8 space-y-6">
                     {relatedProjects.slice(0, 5).map((related) => {
@@ -186,6 +186,7 @@ export default async function ProjectDetailPage({ params }: Props) {
                               alt={related.title}
                               fill
                               className="object-cover"
+                              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                             />
                           </div>
                           <h4 className="font-semibold text-base leading-snug group-hover:text-primary transition-colors line-clamp-3">

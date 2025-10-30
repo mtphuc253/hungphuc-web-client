@@ -1,9 +1,10 @@
 import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
 import { getSettings } from "@/services/settingsService";
+import type { Setting } from "@/types";
 
 // Define the shape of the settings object
 export interface SiteSettings {
-  ticker_messages?: string[];
+  ticker_messages?: string;
   logo_url?: string;
   email?: string;
   abbname?: string;
@@ -16,45 +17,52 @@ export interface SiteSettings {
 
 interface SettingsState {
   settings: SiteSettings;
-  status: 'idle' | 'loading' | 'succeeded' | 'failed';
+  status: "idle" | "loading" | "succeeded" | "failed";
   error: string | null;
 }
 
 const initialState: SettingsState = {
   settings: {},
-  status: 'idle',
+  status: "idle",
   error: null,
 };
 
-// Async thunk for fetching settings
-export const fetchSettings = createAsyncThunk(
-  'settings/fetchSettings',
+// ✅ Async thunk cho API mới (trả về Setting[])
+export const fetchSettings = createAsyncThunk<Setting[], void, { rejectValue: string }>(
+  "settings/fetchSettings",
   async (_, { rejectWithValue }) => {
     try {
-      const settings = await getSettings();
+      const settings = await getSettings(); // giờ getSettings() trả về mảng Setting[]
+      if (!Array.isArray(settings)) {
+        return rejectWithValue("Invalid settings data received from server");
+      }
       return settings;
     } catch (error: any) {
-      return rejectWithValue(error.message || 'Failed to fetch settings');
+      return rejectWithValue(error.message || "Failed to fetch settings");
     }
   }
 );
 
 const settingsSlice = createSlice({
-  name: 'settings',
+  name: "settings",
   initialState,
   reducers: {},
   extraReducers: (builder) => {
     builder
       .addCase(fetchSettings.pending, (state) => {
-        state.status = 'loading';
+        state.status = "loading";
       })
-      .addCase(fetchSettings.fulfilled, (state, action: PayloadAction<SiteSettings>) => {
-        state.status = 'succeeded';
-        state.settings = action.payload;
+      .addCase(fetchSettings.fulfilled, (state, action: PayloadAction<Setting[]>) => {
+        state.status = "succeeded";
+        // ✅ Chuyển mảng settings thành object key-value để dễ truy cập
+        state.settings = action.payload.reduce((acc: SiteSettings, setting) => {
+          acc[setting.key] = setting.value;
+          return acc;
+        }, {});
       })
       .addCase(fetchSettings.rejected, (state, action) => {
-        state.status = 'failed';
-        state.error = action.payload as string;
+        state.status = "failed";
+        state.error = action.payload || "Failed to fetch settings";
       });
   },
 });

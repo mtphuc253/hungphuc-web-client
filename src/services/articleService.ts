@@ -1,4 +1,5 @@
 import axiosClient from "@/lib/axiosClient";
+import axiosPublic from "@/lib/axiosPublic";
 import {
   ApiListResponse,
   ApiResponse,
@@ -18,17 +19,17 @@ export const articleService = {
   async getArticles(
     params: GetArticlesParams = {}
   ): Promise<ApiListResponse<Article>> {
-    const res = await axiosClient.get("/api/articles", { params });
+    const res = await axiosPublic.get("/api/articles", { params });
     return res.data;
   },
 
   async getArticleBySlug(slug: string): Promise<ApiResponse<ArticleDetail>> {
-    const res = await axiosClient.get(`/api/articles/${slug}`);
+    const res = await axiosPublic.get(`/api/articles/${slug}`);
     return res.data;
   },
 
   async getCategories(): Promise<ApiListResponse<Category>> {
-    const res = await axiosClient.get("/api/categories");
+    const res = await axiosPublic.get("/api/categories");
     return res.data;
   },
 };

@@ -1,22 +1,19 @@
-import { configureStore } from "@reduxjs/toolkit";
-import authSlice from "./slices/authSlice";
-import settingsSlice from "./slices/settingsSlice";
-import { setupAxiosInterceptors } from "@/lib/axiosClient";
+// src/store/index.ts
+import { configureStore } from '@reduxjs/toolkit';
+import authReducer from './slices/authSlice';
+import settingsReducer from './slices/settingsSlice';
 
-export const store = configureStore({
-  reducer: {
-    auth: authSlice,
-    settings: settingsSlice,
-  },
-  middleware: (getDefaultMiddleware) =>
-    getDefaultMiddleware({
-      serializableCheck: {
-        ignoredActions: ["persist/PERSIST", "persist/REHYDRATE"],
-      },
-    }),
-});
+export const makeStore = () => {
+  return configureStore({
+    reducer: {
+      auth: authReducer,
+      settings: settingsReducer,
+    },
+  });
+};
 
-setupAxiosInterceptors(store); // ✅ store.dispatch đã là AppDispatch
-
-export type RootState = ReturnType<typeof store.getState>;
-export type AppDispatch = typeof store.dispatch;
+// Infer the type of makeStore
+export type AppStore = ReturnType<typeof makeStore>;
+// Infer the `RootState` and `AppDispatch` types from the store itself
+export type RootState = ReturnType<AppStore['getState']>;
+export type AppDispatch = AppStore['dispatch'];

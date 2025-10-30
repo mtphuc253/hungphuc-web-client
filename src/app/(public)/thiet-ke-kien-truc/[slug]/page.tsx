@@ -1,4 +1,4 @@
-
+// src/app/thiet-ke-kien-truc/[slug]/page.tsx
 import { projectService } from '@/services/projectService'
 import { formatDate } from '@/lib/utils'
 import { notFound } from 'next/navigation'
@@ -10,25 +10,27 @@ import { SectionTitle } from '@/components/ui/section-title'
 import { Badge } from '@/components/ui/badge'
 import { Calendar, MapPin, Building, Tag } from 'lucide-react'
 
-type Props = {
-  params: { slug: string }
+type Params = { slug: string }
+
+async function resolveParams(params: Params | Promise<Params>): Promise<Params> {
+  return params instanceof Promise ? await params : params
 }
 
-export async function generateMetadata({ params }: Props): Promise<Metadata> {
+export async function generateMetadata({ params }: { params: Params | Promise<Params> }): Promise<Metadata> {
+  const { slug } = await resolveParams(params)
+
   try {
-    const { data: project } = await projectService.getProjectBySlug(params.slug)
+    const { data: project } = await projectService.getProjectBySlug(slug)
     if (!project) {
-      return {
-        title: 'Dự án không tồn tại',
-      }
+      return { title: 'Dự án không tồn tại' }
     }
+
     const categoryPath = project.category === 'construction' ? 'thi-cong-xay-dung' : 'thiet-ke-kien-truc'
+
     return {
       title: project.meta_title || project.title,
       description: project.meta_description || project.description,
-      alternates: {
-        canonical: `/${categoryPath}/${project.slug}`,
-      },
+      alternates: { canonical: `/${categoryPath}/${project.slug}` },
     }
   } catch (error) {
     console.error('[generateMetadata]', error)
@@ -39,13 +41,11 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   }
 }
 
-export default async function ProjectDetailPage({ params }: Props) {
-  const { slug } = params
-  const { data: project } = await projectService.getProjectBySlug(slug)
+export default async function ProjectDetailPage({ params }: { params: Params | Promise<Params> }) {
+  const { slug } = await resolveParams(params)
 
-  if (!project) {
-    notFound()
-  }
+  const { data: project } = await projectService.getProjectBySlug(slug)
+  if (!project) notFound()
 
   const [relatedProjectsRes, latestProjectsRes] = await Promise.all([
     projectService.getProjects({ subcategory: project.subcategory, limit: 6 }),
@@ -186,6 +186,7 @@ export default async function ProjectDetailPage({ params }: Props) {
                               alt={related.title}
                               fill
                               className="object-cover"
+                              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                             />
                           </div>
                           <h4 className="font-semibold text-base leading-snug group-hover:text-primary transition-colors line-clamp-3">

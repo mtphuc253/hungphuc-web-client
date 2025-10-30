@@ -112,7 +112,6 @@
   --sidebar-ring: oklch(0.488 0.243 264.376);
 }
 
-
 @layer base {
   * {
     @apply border-border outline-ring/50;
@@ -139,4 +138,13 @@
 
 .animate-ring {
   animation: ring 4s ease-in-out infinite;
+}
+
+@keyframes marquee {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
 }

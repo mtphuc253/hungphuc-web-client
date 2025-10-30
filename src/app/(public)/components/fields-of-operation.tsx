@@ -38,12 +38,14 @@ function FieldCard({ title, description, imageUrl }: { title: string; imageUrl: 
   return (
     <div className="relative rounded-lg shadow-lg overflow-hidden group h-80 transform transition-transform duration-500 hover:-translate-y-2 hover:shadow-2xl">
       <Image
-    src={imageUrl}
-    alt={title}
-    fill
-    style={{ objectFit: "cover" }} 
-    className="transition-transform duration-500 group-hover:scale-110"
-  />
+        src={imageUrl}
+        alt={title}
+        fill
+        sizes="(max-width: 768px) 100vw, 400px"
+        style={{ objectFit: "cover" }}
+        className="transition-transform duration-500 group-hover:scale-110"
+      />
+
       <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/50 to-transparent"></div>
       <div className="absolute inset-0 flex flex-col justify-end p-6 text-white">
         <h3 className="text-2xl font-bold">{title}</h3>
