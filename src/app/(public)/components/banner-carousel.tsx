@@ -5,7 +5,16 @@ import Image from "next/image"
 import { ChevronLeft, ChevronRight, MoveRight } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import Link from "next/link"
+import axiosPublic from "@/lib/axiosPublic"
 import type { Banner } from "@/types"
+
+interface ApiBanner {
+  id: string | number
+  title: string
+  image_url: string
+  link_url?: string | null
+  order_index: number
+}
 
 interface BannerCarouselProps {
   banners: Banner[];
@@ -13,27 +22,87 @@ interface BannerCarouselProps {
 
 export function BannerCarousel({ banners }: BannerCarouselProps) {
   const [currentIndex, setCurrentIndex] = useState(0)
+  const [visibleBanners, setVisibleBanners] = useState(banners)
+  const [loadStatus, setLoadStatus] = useState<"ready" | "loading" | "empty" | "error">(
+    banners.length > 0 ? "ready" : "loading"
+  )
 
   useEffect(() => {
-    if (banners.length === 0) return
+    if (banners.length > 0) {
+      setVisibleBanners(banners)
+      setLoadStatus("ready")
+      return
+    }
+
+    let cancelled = false
+    let attempts = 0
+    let retryTimer: ReturnType<typeof setTimeout> | undefined
+
+    const loadBanners = async () => {
+      try {
+        const response = await axiosPublic.get<{ success: boolean; data: ApiBanner[] }>("/api/banners")
+        if (!response.data.success || !Array.isArray(response.data.data)) {
+          throw new Error("Invalid banner response")
+        }
+
+        const loadedBanners: Banner[] = response.data.data
+          .map((banner) => ({
+            id: String(banner.id),
+            title: banner.title,
+            imageUrl: banner.image_url,
+            link: banner.link_url || "",
+            order: banner.order_index,
+            isActive: true,
+          }))
+          .sort((a, b) => a.order - b.order)
+
+        if (cancelled) return
+        setVisibleBanners(loadedBanners)
+        setLoadStatus(loadedBanners.length > 0 ? "ready" : "empty")
+      } catch {
+        if (cancelled) return
+        if (attempts < 3) {
+          attempts += 1
+          retryTimer = setTimeout(loadBanners, 3000)
+        } else {
+          setLoadStatus("error")
+        }
+      }
+    }
+
+    void loadBanners()
+    return () => {
+      cancelled = true
+      if (retryTimer) clearTimeout(retryTimer)
+    }
+  }, [banners])
+
+  useEffect(() => {
+    if (visibleBanners.length === 0) return
     const interval = setInterval(() => {
-      setCurrentIndex((prevIndex) => (prevIndex + 1) % banners.length)
+      setCurrentIndex((prevIndex) => (prevIndex + 1) % visibleBanners.length)
     }, 5000)
     return () => clearInterval(interval)
-  }, [banners.length])
+  }, [visibleBanners.length])
 
   const goToPrevious = () => {
-    setCurrentIndex((prevIndex) => (prevIndex - 1 + banners.length) % banners.length)
+    setCurrentIndex((prevIndex) => (prevIndex - 1 + visibleBanners.length) % visibleBanners.length)
   }
 
   const goToNext = () => {
-    setCurrentIndex((prevIndex) => (prevIndex + 1) % banners.length)
+    setCurrentIndex((prevIndex) => (prevIndex + 1) % visibleBanners.length)
   }
 
-  if (banners.length === 0) {
+  if (visibleBanners.length === 0) {
     return (
-      <div className="relative w-full h-[600px] bg-gray-200 flex items-center justify-center">
-        <div className="text-lg text-gray-600">{"Không có banner để hiển thị"}</div>
+      <div className="relative flex h-[680px] w-full items-center justify-center bg-gray-200">
+        <div className="text-lg text-gray-600" aria-live="polite">
+          {loadStatus === "loading"
+            ? "Đang tải banner..."
+            : loadStatus === "empty"
+              ? "Hiện chưa có banner để hiển thị"
+              : "Không tải được banner. Vui lòng tải lại trang."}
+        </div>
       </div>
     )
   }
@@ -41,7 +110,7 @@ export function BannerCarousel({ banners }: BannerCarouselProps) {
   return (
     <section className="relative w-full h-[680px] overflow-hidden" aria-roledescription="carousel" aria-label="Công trình tiêu biểu">
       <div className="relative w-full h-full">
-        {banners.map((banner, index) => (
+        {visibleBanners.map((banner, index) => (
           <div
             key={banner.id}
             aria-hidden={index !== currentIndex}
@@ -99,7 +168,7 @@ export function BannerCarousel({ banners }: BannerCarouselProps) {
       </Button>
 
       <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex space-x-2">
-        {banners.map((_, index) => (
+        {visibleBanners.map((_, index) => (
           <button
             key={index}
             className={`w-3 h-3 rounded-full transition-all duration-300 ${
