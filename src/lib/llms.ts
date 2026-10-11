@@ -1,24 +1,16 @@
 // Sinh nội dung llms.txt / llms-full.txt theo chuẩn https://llmstxt.org
 import { apiGet, DEFAULT_DESCRIPTION, getSiteSettings, SITE_LEGAL_NAME, SITE_NAME, SITE_URL, stripHtml, truncate } from "./seo";
 import { getAllArticles, getAllProjects, projectPath, type PublicProject } from "./site-content";
-import { getEstimatePublicConfig } from "@/lib/estimate-server";
-
-interface PricingCategory {
-  title: string;
-  description: string | null;
-  details: { title: string; content: string | null }[];
-}
 
 const oneLine = (s?: string | null, max = 180) => truncate((s || "").replace(/\s+/g, " "), max);
 
 async function loadAll() {
-  const [settings, articles, projects, pricing] = await Promise.all([
+  const [settings, articles, projects] = await Promise.all([
     getSiteSettings(),
     getAllArticles(),
     getAllProjects(),
-    apiGet<{ data: PricingCategory[] }>("/api/pricings/categories", 3600).then((r) => r?.data ?? []),
   ]);
-  return { settings, articles, projects, pricing };
+  return { settings, articles, projects };
 }
 
 function header(settings: Record<string, string>) {
@@ -49,8 +41,7 @@ const projectLine = (p: PublicProject) => {
 };
 
 export async function buildLlmsTxt() {
-  const { settings, articles, projects, pricing } = await loadAll();
-  const estimate = await getEstimatePublicConfig();
+  const { settings, articles, projects } = await loadAll();
   const arch = projects.filter((p) => p.category === "architecture");
   const cons = projects.filter((p) => p.category === "construction");
 
@@ -61,22 +52,12 @@ export async function buildLlmsTxt() {
     "",
     `- [Trang chủ](${SITE_URL}/): Giới thiệu tổng quan dịch vụ, dự án tiêu biểu, quy trình thi công và đối tác`,
     `- [Giới thiệu](${SITE_URL}/gioi-thieu): Lịch sử, tầm nhìn, sứ mệnh và ban lãnh đạo công ty`,
-    `- [Bảng giá](${SITE_URL}/bang-gia): Đơn giá thiết kế kiến trúc và thi công xây dựng tham khảo`,
+    `- [Dự toán chi phí xây nhà bằng AI](${SITE_URL}/bang-gia): Công cụ miễn phí ước tính chi phí xây dựng theo đơn giá hiện hành của Hưng Phúc`,
     `- [Dự án thiết kế kiến trúc](${SITE_URL}/thiet-ke-kien-truc): ${arch.length} dự án thiết kế`,
     `- [Dự án thi công xây dựng](${SITE_URL}/thi-cong-xay-dung): ${cons.length} công trình thi công`,
     `- [Tin tức & cẩm nang](${SITE_URL}/tin-tuc): ${articles.length} bài viết kiến thức xây dựng`,
     `- [Liên hệ](${SITE_URL}/lien-lac): Gửi yêu cầu tư vấn, báo giá`,
   ];
-  if (estimate?.enabled) {
-    lines.push(
-      `- [Dự toán chi phí xây nhà bằng AI](${SITE_URL}/du-toan): Công cụ miễn phí tính chi phí ${estimate.packages.map((p) => p.label.toLowerCase()).join(", ")} theo diện tích quy đổi và đơn giá thực tế của Hưng Phúc; trợ lý AI giải thích kết quả, kỹ sư xác nhận`
-    );
-  }
-
-  if (pricing.length) {
-    lines.push("", "## Bảng giá", "");
-    pricing.forEach((c) => lines.push(`- [${c.title}](${SITE_URL}/bang-gia): ${oneLine(c.description, 160) || c.details.map((d) => d.title).join("; ")}`));
-  }
   if (arch.length) {
     lines.push("", "## Dự án thiết kế kiến trúc", "");
     arch.forEach((p) => lines.push(projectLine(p)));
@@ -103,20 +84,8 @@ export async function buildLlmsTxt() {
 }
 
 export async function buildLlmsFullTxt() {
-  const { settings, articles, projects, pricing } = await loadAll();
+  const { settings, articles, projects } = await loadAll();
   const lines = [...header(settings), ""];
-
-  if (pricing.length) {
-    lines.push("## Bảng giá", "", `Nguồn: ${SITE_URL}/bang-gia`, "");
-    pricing.forEach((c) => {
-      lines.push(`### ${c.title}`, "");
-      if (c.description) lines.push(c.description.trim(), "");
-      c.details.forEach((d) => {
-        lines.push(`#### ${d.title}`, "");
-        if (d.content) lines.push(stripHtml(d.content), "");
-      });
-    });
-  }
 
   if (projects.length) {
     lines.push("## Dự án", "");

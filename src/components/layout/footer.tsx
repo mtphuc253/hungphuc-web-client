@@ -23,7 +23,7 @@ export function Footer() {
   const operationLinks = [
     { label: "Thiết Kế Kiến Trúc", href: "/thiet-ke-kien-truc" },
     { label: "Thi Công Xây Dựng", href: "/thi-cong-xay-dung" },
-    { label: "Dự Toán Chi Phí", href: "/du-toan" },
+    { label: "Dự Toán AI", href: "/bang-gia" },
     { label: "Bảng Giá", href: "/bang-gia" },
     { label: "Tư Vấn & Báo Giá", href: "/lien-lac" },
   ]
@@ -211,7 +211,7 @@ export function Footer() {
                 <Link href="/lien-lac" className="hover:text-white transition-colors">
                   Liên hệ
                 </Link>
-                <Link href="/du-toan" className="hover:text-white transition-colors">
+                <Link href="/bang-gia" className="hover:text-white transition-colors">
                   Dự toán chi phí
                 </Link>
               </div>

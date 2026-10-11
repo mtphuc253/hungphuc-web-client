@@ -53,7 +53,7 @@ export default function EstimateAdminPage() {
         actions={
           <>
             <a
-              href="/du-toan"
+              href="/bang-gia"
               target="_blank"
               rel="noreferrer"
               className="inline-flex h-9 items-center gap-2 rounded-lg border border-slate-200 bg-white px-4 text-sm font-medium text-slate-700 shadow-sm hover:bg-slate-50"
@@ -386,7 +386,7 @@ function ConfigEditor() {
           disabled={!canEdit}
           onChange={(v) => setCfg({ ...cfg, enabled: v })}
           label="Hiển thị công cụ dự toán trên website"
-          description="Trang chủ (ngay dưới banner) và trang /du-toan"
+          description="Chỉ hiển thị công cụ tại trang /bang-gia"
         />
         <div className="grid gap-4 md:grid-cols-3">
           <Field label="Biên độ khoảng giá (±%)" htmlFor="est-range" hint="Khách thấy khoảng giá thấp – cao quanh con số ước tính">

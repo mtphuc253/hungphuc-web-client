@@ -1,12 +1,11 @@
 import type { MetadataRoute } from "next";
 import { SITE_URL } from "@/lib/seo";
 import { getAllArticles, getAllProjects, projectPath } from "@/lib/site-content";
-import { getEstimatePublicConfig } from "@/lib/estimate-server";
 
 export const revalidate = 3600;
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const [articles, projects, estimate] = await Promise.all([getAllArticles(), getAllProjects(), getEstimatePublicConfig()]);
+  const [articles, projects] = await Promise.all([getAllArticles(), getAllProjects()]);
 
   const latestArticle = articles.reduce<string | undefined>(
     (max, a) => (!max || a.updated_at > max ? a.updated_at : max),
@@ -23,7 +22,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: `${SITE_URL}/thiet-ke-kien-truc`, changeFrequency: "weekly", priority: 0.9, lastModified: latestProject },
     { url: `${SITE_URL}/thi-cong-xay-dung`, changeFrequency: "weekly", priority: 0.9, lastModified: latestProject },
     { url: `${SITE_URL}/bang-gia`, changeFrequency: "monthly", priority: 0.8 },
-    ...(estimate?.enabled ? [{ url: `${SITE_URL}/du-toan`, changeFrequency: "monthly" as const, priority: 0.9 }] : []),
     { url: `${SITE_URL}/tin-tuc`, changeFrequency: "daily", priority: 0.8, lastModified: latestArticle },
     { url: `${SITE_URL}/lien-lac`, changeFrequency: "yearly", priority: 0.6 },
   ];

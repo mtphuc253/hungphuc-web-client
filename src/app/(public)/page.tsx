@@ -11,8 +11,6 @@ import { Partners } from "./components/partners"
 import { FeaturedProjects } from "./components/featured-projects"
 import { LatestArticles } from "./components/latest-articles"
 import { CompanyIntroduction } from "./gioi-thieu/components/company-introduction"
-import { EstimateSection } from "@/components/estimate/estimate-section"
-import { getEstimatePublicConfig } from "@/lib/estimate-server"
 
 export async function generateMetadata(): Promise<Metadata> {
   const s = await getSiteSettings()
@@ -40,14 +38,12 @@ export default async function HomePage() {
     architectureProjects, 
     constructionProjects, 
     latestArticles,
-    estimateConfig,
   ] = await Promise.all([
     getBanners().catch(() => []),
     getPartners(),
     projectService.getProjects({ category: 'architecture', limit: 4 }).catch(() => ({ data: [] })),
     projectService.getProjects({ category: 'construction', limit: 4 }).catch(() => ({ data: [] })),
     articleService.getArticles({ limit: 3 }).catch(() => ({ data: [] })),
-    getEstimatePublicConfig(),
   ])
 
   return (
@@ -56,7 +52,6 @@ export default async function HomePage() {
         Hưng Phúc – Công ty TNHH Tư vấn Đầu tư Xây dựng: thiết kế kiến trúc, thi công xây dựng nhà phố, biệt thự trọn gói
       </h1>
       <BannerCarousel banners={banners} />
-      {estimateConfig?.enabled && <EstimateSection config={estimateConfig} />}
       <CompanyIntroduction />
       <FieldsOfOperation />
       <FeaturedProjects 
