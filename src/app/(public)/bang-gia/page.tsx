@@ -9,11 +9,11 @@ import { getEstimatePublicConfig } from "@/lib/estimate-server";
 export const revalidate = 60;
 
 export const metadata: Metadata = pageMetadata({
-  title: "Dự toán chi phí xây nhà bằng AI – miễn phí",
+  title: "Dự toán chi phí xây nhà online – miễn phí",
   description:
-    "Ước tính chi phí xây nhà theo đơn giá hiện hành của Hưng Phúc. Nhập thông tin công trình hoặc mô tả bằng lời để AI hỗ trợ lập dự toán.",
+    "Tự ước tính chi phí xây nhà theo diện tích, loại công trình và đơn giá tham khảo. Kỹ sư Hưng Phúc tư vấn, xác nhận báo giá miễn phí.",
   path: "/bang-gia",
-  keywords: ["dự toán chi phí xây nhà", "báo giá xây nhà", "dự toán AI", "giá xây nhà trọn gói"],
+  keywords: ["dự toán chi phí xây nhà", "báo giá xây nhà", "dự toán xây nhà online", "giá xây nhà trọn gói"],
 });
 
 export default async function PricingPage() {
@@ -21,7 +21,7 @@ export default async function PricingPage() {
 
   return (
     <main className="min-h-screen bg-gray-50">
-      <JsonLd data={breadcrumbJsonLd([{ name: "Dự toán AI", path: "/bang-gia" }])} />
+      <JsonLd data={breadcrumbJsonLd([{ name: "Dự toán chi phí", path: "/bang-gia" }])} />
       {config?.enabled && (
         <JsonLd
           data={{

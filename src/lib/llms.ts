@@ -52,7 +52,7 @@ export async function buildLlmsTxt() {
     "",
     `- [Trang chủ](${SITE_URL}/): Giới thiệu tổng quan dịch vụ, dự án tiêu biểu, quy trình thi công và đối tác`,
     `- [Giới thiệu](${SITE_URL}/gioi-thieu): Lịch sử, tầm nhìn, sứ mệnh và ban lãnh đạo công ty`,
-    `- [Dự toán chi phí xây nhà bằng AI](${SITE_URL}/bang-gia): Công cụ miễn phí ước tính chi phí xây dựng theo đơn giá hiện hành của Hưng Phúc`,
+    `- [Dự toán chi phí xây nhà](${SITE_URL}/bang-gia): Công cụ miễn phí ước tính chi phí xây dựng theo đơn giá tham khảo của Hưng Phúc`,
     `- [Dự án thiết kế kiến trúc](${SITE_URL}/thiet-ke-kien-truc): ${arch.length} dự án thiết kế`,
     `- [Dự án thi công xây dựng](${SITE_URL}/thi-cong-xay-dung): ${cons.length} công trình thi công`,
     `- [Tin tức & cẩm nang](${SITE_URL}/tin-tuc): ${articles.length} bài viết kiến thức xây dựng`,
