@@ -55,7 +55,7 @@ export async function generateMetadata(props: Props): Promise<Metadata> {
     type: "article",
     publishedTime: article.published_at,
     modifiedTime: article.updated_at,
-    authors: article.author_name ? [article.author_name] : undefined,
+    authors: [article.author_name || "Ban biên tập Hưng Phúc"],
     section: article.category,
   });
   // Bài đăng lại từ nguồn khác -> canonical trỏ về bản gốc
@@ -76,6 +76,7 @@ export default async function ArticleDetailPage(props: Props) {
 
   const relatedArticles = relatedArticlesRes.data.filter((a) => a.slug !== article.slug);
   const latestArticles = latestArticlesRes.data.filter((a) => a.slug !== article.slug);
+  const authorName = article.author_name || "Ban biên tập Hưng Phúc";
 
   const plain = stripHtml(article.content);
   const words = plain ? plain.split(/\s+/).length : 0;
@@ -95,7 +96,7 @@ export default async function ArticleDetailPage(props: Props) {
     dateModified: article.updated_at || article.published_at,
     author: article.author_name
       ? { "@type": "Person", name: article.author_name, worksFor: ORG_REF }
-      : ORG_REF,
+      : { "@type": "Organization", name: authorName, parentOrganization: ORG_REF },
     publisher: ORG_REF,
     isPartOf: WEBSITE_REF,
     articleSection: article.category,
@@ -145,12 +146,10 @@ export default async function ArticleDetailPage(props: Props) {
               <header className="mb-8">
                 <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4 leading-tight">{article.title}</h1>
                 <div className="flex flex-wrap items-center gap-x-5 gap-y-2 text-sm text-gray-500">
-                  {article.author_name && (
-                    <div className="flex items-center gap-2">
-                      <User className="h-4 w-4" aria-hidden />
-                      <span>{article.author_name}</span>
-                    </div>
-                  )}
+                  <div className="flex items-center gap-2">
+                    <User className="h-4 w-4" aria-hidden />
+                    <span>{authorName}</span>
+                  </div>
                   <div className="flex items-center gap-2">
                     <Calendar className="h-4 w-4" aria-hidden />
                     <time dateTime={article.published_at}>{formatDate(article.published_at)}</time>

@@ -146,7 +146,7 @@ export interface Article {
   published_at: string;
   updated_at: string;
   author_id: string;
-  author_name: string;
+  author_name: string | null;
 }
 
 export interface ArticleDetail extends Article {

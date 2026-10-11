@@ -11,6 +11,8 @@ interface FeaturedArticleCardProps {
 }
 
 export function FeaturedArticleCard({ article }: FeaturedArticleCardProps) {
+  const authorName = article.author_name || "Ban biên tập Hưng Phúc";
+
   return (
     <article className="group relative grid grid-cols-1 md:grid-cols-2 gap-8 items-center rounded-2xl border bg-card text-card-foreground shadow-lg overflow-hidden transition-all duration-300 hover:shadow-2xl mb-12">
       <div className="relative w-full h-64 md:h-full min-h-[300px]">
@@ -41,7 +43,7 @@ export function FeaturedArticleCard({ article }: FeaturedArticleCardProps) {
         <div className="flex items-center space-x-6 text-sm text-muted-foreground">
           <div className="flex items-center gap-2">
             <User className="h-4 w-4" />
-            <span>{article.author_name}</span>
+            <span>{authorName}</span>
           </div>
           <div className="flex items-center gap-2">
             <Calendar className="h-4 w-4" />

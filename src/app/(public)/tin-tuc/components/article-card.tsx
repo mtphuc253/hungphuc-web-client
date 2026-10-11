@@ -11,6 +11,8 @@ interface ArticleCardProps {
 }
 
 export function ArticleCard({ article }: ArticleCardProps) {
+  const authorName = article.author_name || "Ban biên tập Hưng Phúc";
+
   return (
     <article className="group flex flex-col overflow-hidden rounded-lg border bg-card text-card-foreground shadow-sm transition-all hover:shadow-md">
       <Link href={`/tin-tuc/${article.slug}`} className="block overflow-hidden">
@@ -37,7 +39,7 @@ export function ArticleCard({ article }: ArticleCardProps) {
         <div className="mt-auto flex items-center space-x-4 text-xs text-muted-foreground">
           <div className="flex items-center gap-1">
             <User className="h-3 w-3" />
-            <span>{article.author_name}</span>
+            <span>{authorName}</span>
           </div>
           <div className="flex items-center gap-1">
             <Calendar className="h-3 w-3" />
