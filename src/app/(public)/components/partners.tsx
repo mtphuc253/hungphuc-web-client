@@ -37,17 +37,11 @@ export function Partners({ partners }: PartnersProps) {
                   key={`${partner.id}-${index}`}
                   className="flex-shrink-0 mx-8 text-center"
                 >
-                  <Link
-                    href={partner.websiteUrl || "#"}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="block transition-transform duration-300 ease-in-out transform hover:scale-105"
-                    aria-label={`Link to ${partner.name}`}
-                  >
+                  <PartnerWrapper partner={partner} duplicate={index >= partners.length}>
                     <div className="relative h-24 w-48">
                       <Image
-                        src={partner.logoUrl}
-                        alt={partner.name}
+                        src={partner.logoUrl || '/placeholder.svg'}
+                        alt={`Logo ${partner.name}`}
                         fill
                         sizes="(max-width: 768px) 150px, 200px"
                         style={{ objectFit: "contain" }}
@@ -56,7 +50,7 @@ export function Partners({ partners }: PartnersProps) {
                     <p className="mt-4 text-sm font-medium text-gray-700 w-48">
                       {partner.name}
                     </p>
-                  </Link>
+                  </PartnerWrapper>
                 </div>
               ))}
             </div>
@@ -64,5 +58,38 @@ export function Partners({ partners }: PartnersProps) {
         </div>
       </div>
     </section>
+  );
+}
+
+function PartnerWrapper({
+  partner,
+  duplicate,
+  children,
+}: {
+  partner: Partner;
+  duplicate: boolean;
+  children: React.ReactNode;
+}) {
+  const className = "block transition-transform duration-300 ease-in-out transform hover:scale-105";
+  // Bản sao dùng cho hiệu ứng chạy vô hạn -> ẩn khỏi trình đọc màn hình & không cho tab vào
+  const a11y = duplicate ? { "aria-hidden": true, tabIndex: -1 } : {};
+  if (!partner.websiteUrl) {
+    return (
+      <div className={className} {...(duplicate ? { "aria-hidden": true } : {})}>
+        {children}
+      </div>
+    );
+  }
+  return (
+    <Link
+      href={partner.websiteUrl}
+      target="_blank"
+      rel="noopener noreferrer nofollow"
+      className={className}
+      aria-label={`Website đối tác ${partner.name}`}
+      {...a11y}
+    >
+      {children}
+    </Link>
   );
 }

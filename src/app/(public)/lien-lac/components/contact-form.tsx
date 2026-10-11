@@ -6,6 +6,7 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import * as z from "zod"
 import { toast } from "sonner"
 import { contactService } from "@/services/contactService"
+import { getAttribution } from "@/lib/attribution"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Send, User, Mail, Phone, MapPin, MessageSquare } from "lucide-react"
 import { Button } from "@/components/ui/button"
@@ -38,7 +39,11 @@ const ContactForm = () => {
   const onSubmit = (values: z.infer<typeof formSchema>) => {
     startTransition(async () => {
       try {
-        await contactService.sendContact(values)
+        const attribution = getAttribution()
+        await contactService.sendContact({
+          ...values,
+          source: attribution?.utm_source ? `website/${attribution.utm_source}`.slice(0, 50) : "website",
+        })
 
         toast.success("Gửi thông tin liên hệ thành công!")
         form.reset()

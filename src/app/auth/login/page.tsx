@@ -1,5 +1,11 @@
+import type { Metadata } from "next"
 import Image from "next/image"
 import { LoginForm } from "./components/login-form"
+
+export const metadata: Metadata = {
+  title: "Đăng nhập quản trị",
+  robots: { index: false, follow: false },
+}
 
 export default function LoginPage() {
   return (

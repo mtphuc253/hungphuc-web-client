@@ -1,4 +1,6 @@
 import type { Metadata } from "next";
+import { breadcrumbJsonLd, itemListJsonLd, pageMetadata } from "@/lib/seo"
+import { JsonLd } from "@/components/seo/json-ld"
 import { articleService } from "@/services/articleService";
 import { type ArticleCategory } from "@/types";
 import { ArticleCard } from "./components/article-card";
@@ -6,32 +8,30 @@ import { ArticleFilters } from "./components/article-filters";
 import { Pagination } from "./components/pagination";
 import { FeaturedArticleCard } from "./components/featured-article-card";
 
-export const metadata: Metadata = {
-  title: "Tin tức & Cẩm nang Xây dựng | Công ty Hưng Phúc",
-  description: "Cập nhật tin tức, cẩm nang, và kiến thức mới nhất về ngành xây dựng, thiết kế, thi công và pháp lý từ Hưng Phúc.",
-  keywords: [
-    "tin tức xây dựng",
-    "cẩm nang xây dựng",
-    "kiến thức xây dựng",
-    "xu hướng thiết kế",
-    "vật liệu mới",
-    "quy định xây dựng",
-  ],
-  openGraph: {
-    title: "Tin tức & Cẩm nang Xây dựng | Công ty Hưng Phúc",
-    description: "Cập nhật tin tức, cẩm nang, và kiến thức mới nhất về ngành xây dựng, thiết kế, thi công và pháp lý từ Hưng Phúc.",
-    url: "https://hungphuc.com.vn/tin-tuc",
-    type: "website",
-    images: [
-      {
-        url: "https://res.cloudinary.com/dizk1uwv3/image/upload/v1759057998/Hungphuc/nhan-su-hung-phuc-khao-sat-cong-trinh.jpg",
-        width: 1200,
-        height: 630,
-        alt: "Tin tức & Cẩm nang Xây dựng Hưng Phúc",
-      },
-    ],
-  },
+const BASE_META = {
+  title: "Tin tức & Cẩm nang xây dựng",
+  description: "Cập nhật tin tức, cẩm nang, chi phí, pháp lý và kinh nghiệm thiết kế – thi công xây dựng mới nhất từ đội ngũ kỹ sư, kiến trúc sư Hưng Phúc.",
+  path: "/tin-tuc",
+  keywords: ["tin tức xây dựng", "cẩm nang xây dựng", "kinh nghiệm xây nhà", "chi phí xây nhà", "pháp lý xây dựng"],
 };
+
+export async function generateMetadata({ searchParams }: NewsPageProps): Promise<Metadata> {
+  const { page, title, category } = await searchParams;
+  const pageNum = Number(page) > 1 ? Number(page) : 1;
+  const qs = new URLSearchParams();
+  if (category) qs.set("category", category);
+  if (pageNum > 1) qs.set("page", String(pageNum));
+  const path = `/tin-tuc${qs.toString() ? `?${qs}` : ""}`;
+  const heading = category ? `${category}` : BASE_META.title;
+  return pageMetadata({
+    ...BASE_META,
+    title: pageNum > 1 ? `${heading} – Trang ${pageNum}` : heading,
+    description: category ? `Bài viết chuyên mục ${category}: ${BASE_META.description}` : BASE_META.description,
+    path,
+    // Trang kết quả tìm kiếm không nên được index
+    noindex: !!title,
+  });
+}
 
 interface NewsPageProps {
   searchParams: Promise<{
@@ -51,12 +51,9 @@ export default async function NewsPage({ searchParams }: NewsPageProps) {
   const isMainFirstPage = page === "1" && !title && !category;
   const limit = isMainFirstPage ? 10 : 9; // 1 featured + 9 grid on first page, 9 on others
 
-  const { data: articles, meta } = await articleService.getArticles({
-    page,
-    limit: String(limit),
-    title,
-    category,
-  });
+  const { data: articles, meta } = await articleService
+    .getArticles({ page, limit: String(limit), title, category })
+    .catch(() => ({ data: [] as Awaited<ReturnType<typeof articleService.getArticles>>["data"], meta: undefined }));
 
   const featuredArticle =
     isMainFirstPage && articles.length > 0 ? articles[0] : null;
@@ -67,6 +64,13 @@ export default async function NewsPage({ searchParams }: NewsPageProps) {
 
   return (
     <main className="min-h-screen bg-background py-12">
+      <JsonLd data={breadcrumbJsonLd([{ name: "Tin tức", path: "/tin-tuc" }])} />
+      <JsonLd
+        data={itemListJsonLd(
+          "Tin tức & Cẩm nang xây dựng – Hưng Phúc",
+          articles.map((a) => ({ name: a.title, path: `/tin-tuc/${a.slug}`, image: a.thumbnail_url }))
+        )}
+      />
       <div className="container mx-auto px-4">
         <header className="mb-8 border-b pb-8">
           <h1 className="text-4xl font-bold tracking-tight text-gray-900 sm:text-5xl">

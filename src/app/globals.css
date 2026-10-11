@@ -1,5 +1,6 @@
 @import "tailwindcss";
 @import "tw-animate-css";
+@plugin "@tailwindcss/typography";
 
 @custom-variant dark (&:is(.dark *));
 
@@ -138,6 +139,72 @@
 
 .animate-ring {
   animation: ring 4s ease-in-out infinite;
+}
+
+/* ===================== ADMIN THEME ===================== */
+/* Khu vực quản trị dùng bo góc mềm hơn site public */
+.admin-theme {
+  --radius: 0.625rem;
+  --background: #f5f6fa;
+  --ring: #4f46e5;
+}
+
+/* TipTap editor */
+.tiptap-content .ProseMirror {
+  min-height: 420px;
+  outline: none;
+  padding: 1.25rem 1.5rem;
+}
+.tiptap-content .ProseMirror p.is-editor-empty:first-child::before {
+  content: attr(data-placeholder);
+  float: left;
+  color: #94a3b8;
+  pointer-events: none;
+  height: 0;
+}
+.tiptap-content .ProseMirror img {
+  border-radius: 0.5rem;
+  max-width: 100%;
+  height: auto;
+}
+.tiptap-content .ProseMirror img.ProseMirror-selectednode {
+  outline: 3px solid #4f46e5;
+}
+.tiptap-content .ProseMirror table {
+  border-collapse: collapse;
+  width: 100%;
+  table-layout: fixed;
+  overflow: hidden;
+}
+.tiptap-content .ProseMirror th,
+.tiptap-content .ProseMirror td {
+  border: 1px solid #cbd5e1;
+  padding: 0.4rem 0.6rem;
+  vertical-align: top;
+  position: relative;
+}
+.tiptap-content .ProseMirror th {
+  background: #f1f5f9;
+  font-weight: 600;
+}
+.tiptap-content .ProseMirror .selectedCell::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: rgb(79 70 229 / 0.12);
+  pointer-events: none;
+}
+.tiptap-content.compact .ProseMirror {
+  min-height: 180px;
+}
+
+/* Thanh cuộn mảnh cho sidebar admin */
+.admin-scroll::-webkit-scrollbar {
+  width: 6px;
+}
+.admin-scroll::-webkit-scrollbar-thumb {
+  background: rgb(255 255 255 / 0.12);
+  border-radius: 9999px;
 }
 
 @keyframes marquee {

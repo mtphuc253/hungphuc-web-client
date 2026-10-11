@@ -1,33 +1,15 @@
 import type { Metadata } from 'next'
+import { breadcrumbJsonLd, itemListJsonLd, pageMetadata } from "@/lib/seo"
+import { JsonLd } from "@/components/seo/json-ld"
 import { projectService } from '@/services/projectService'
 import { ConstructionProjects } from './components/construction-projects'
 
-export const metadata: Metadata = {
-  title: 'Dự án Thi công Xây dựng | Công ty Xây dựng Hưng Phúc',
-  description: 'Các công trình thi công chất lượng, đảm bảo tiến độ và an toàn lao động, minh chứng cho năng lực và uy tín của Hưng Phúc trong ngành.',
-  keywords: [
-    'thi công xây dựng',
-    'dự án xây dựng',
-    'công ty xây dựng',
-    'xây dựng nhà phố',
-    'xây dựng biệt thự',
-    'Hưng Phúc',
-  ],
-  openGraph: {
-    title: 'Dự án Thi công Xây dựng | Công ty Xây dựng Hưng Phúc',
-    description: 'Các công trình thi công chất lượng, đảm bảo tiến độ và an toàn lao động, minh chứng cho năng lực và uy tín của Hưng Phúc trong ngành.',
-    url: 'https://hungphuc.com.vn/thi-cong-xay-dung',
-    type: 'website',
-    images: [
-      {
-        url: 'https://res.cloudinary.com/dizk1uwv3/image/upload/v1758531623/Hungphuc/linh-vuc-giam-sat.jpg',
-        width: 1200,
-        height: 630,
-        alt: 'Dự án Thi công Xây dựng Hưng Phúc',
-      },
-    ],
-  },
-}
+export const metadata: Metadata = pageMetadata({
+  title: "Dự án thi công xây dựng",
+  description: "Các công trình thi công xây dựng nhà phố, biệt thự, nhà xưởng trọn gói do Hưng Phúc thực hiện – đúng tiến độ, đảm bảo chất lượng và an toàn.",
+  path: "/thi-cong-xay-dung",
+  keywords: ["thi công xây dựng", "xây nhà trọn gói", "thi công biệt thự", "thi công nhà phố", "Hưng Phúc"],
+})
 
 async function getInitialProjects() {
   try {
@@ -51,6 +33,13 @@ export default async function ConstructionProjectsPage() {
 
   return (
     <main className="min-h-screen bg-gray-50/50 py-12 sm:py-16">
+      <JsonLd data={breadcrumbJsonLd([{ name: "Thi công xây dựng", path: "/thi-cong-xay-dung" }])} />
+      <JsonLd
+        data={itemListJsonLd(
+          "Dự án thi công xây dựng – Hưng Phúc",
+          initialProjects.map((p) => ({ name: p.title, path: `/thi-cong-xay-dung/${p.slug}`, image: p.featured_image }))
+        )}
+      />
       <div className="container mx-auto px-4">
         <header className="mb-12 text-center">
           <h1 className="text-4xl font-extrabold tracking-tight text-gray-900 sm:text-5xl lg:text-6xl">

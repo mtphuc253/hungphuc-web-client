@@ -29,7 +29,7 @@ export const articleService = {
   },
 
   async getCategories(): Promise<ApiListResponse<Category>> {
-    const res = await axiosPublic.get("/api/categories");
+    const res = await axiosPublic.get("/api/articles/categories");
     return res.data;
   },
 };

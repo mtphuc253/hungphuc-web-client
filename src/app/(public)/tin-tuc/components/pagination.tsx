@@ -57,15 +57,21 @@ export function Pagination({ totalPages }: PaginationProps) {
   if (totalPages <= 1) return null;
 
   return (
-    <nav className="mt-12 flex items-center justify-center space-x-2">
+    <nav className="mt-12 flex items-center justify-center space-x-2" aria-label="Phân trang tin tức">
       <Button
         asChild
         variant={currentPage === 1 ? 'outline' : 'default'}
         size="icon"
         disabled={currentPage === 1}
       >
-        <Link href={createPageURL(currentPage - 1)}>
-          <ChevronLeft className="h-4 w-4" />
+        <Link
+          href={createPageURL(Math.max(1, currentPage - 1))}
+          aria-label="Trang trước"
+          aria-disabled={currentPage === 1}
+          rel="prev"
+          className={cn({ "pointer-events-none opacity-50": currentPage === 1 })}
+        >
+          <ChevronLeft className="h-4 w-4" aria-hidden />
         </Link>
       </Button>
 
@@ -81,7 +87,7 @@ export function Pagination({ totalPages }: PaginationProps) {
           {page === '...' ? (
             <span>...</span>
           ) : (
-            <Link href={createPageURL(page as number)}>{page}</Link>
+            <Link href={createPageURL(page as number)} aria-label={`Trang ${page}`} aria-current={page === currentPage ? "page" : undefined}>{page}</Link>
           )}
         </Button>
       ))}
@@ -92,8 +98,14 @@ export function Pagination({ totalPages }: PaginationProps) {
         size="icon"
         disabled={currentPage === totalPages}
       >
-        <Link href={createPageURL(currentPage + 1)}>
-          <ChevronRight className="h-4 w-4" />
+        <Link
+          href={createPageURL(Math.min(totalPages, currentPage + 1))}
+          aria-label="Trang sau"
+          aria-disabled={currentPage === totalPages}
+          rel="next"
+          className={cn({ "pointer-events-none opacity-50": currentPage === totalPages })}
+        >
+          <ChevronRight className="h-4 w-4" aria-hidden />
         </Link>
       </Button>
     </nav>

@@ -1,28 +1,8 @@
-import { projectService } from "@/services/projectService";
-import { ArchitectureProjectList } from "./components/architecture-project-list";
-import { Suspense } from "react";
+import type { Metadata } from "next";
+import { ProjectList } from "@/components/admin/project-list";
 
-export const revalidate = 0;
+export const metadata: Metadata = { title: "Dự án Thiết kế kiến trúc" };
 
-async function ProjectData() {
-  const initialData = await projectService.getProjects({
-    page: 1,
-    limit: 10,
-    category: "architecture",
-  });
-
-  return (
-    <ArchitectureProjectList
-      initialProjects={initialData.data}
-      initialMeta={initialData.meta ?? null}
-    />
-  );
-}
-
-export default function ArchitectureProjectsPage() {
-  return (
-    <Suspense fallback={<div>Loading...</div>}>
-      <ProjectData />
-    </Suspense>
-  );
+export default function Page() {
+  return <ProjectList category="architecture" />;
 }

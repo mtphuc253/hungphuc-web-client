@@ -15,7 +15,7 @@ export function ArticleCard({ article }: ArticleCardProps) {
     <article className="group flex flex-col overflow-hidden rounded-lg border bg-card text-card-foreground shadow-sm transition-all hover:shadow-md">
       <Link href={`/tin-tuc/${article.slug}`} className="block overflow-hidden">
         <Image
-          src={article.thumbnail_url}
+          src={article.thumbnail_url || '/placeholder.svg'}
           alt={article.title}
           width={400}
           height={225}

@@ -18,10 +18,10 @@ export function Header() {
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-20">
           {/* Logo and Company Name */}
-          <Link href="/" className="flex items-center">
+          <Link href="/" className="flex items-center" aria-label="Hưng Phúc - Trang chủ">
             <Image
               src="https://res.cloudinary.com/dizk1uwv3/image/upload/v1758561417/Hungphuc/logo-hung-phuc-ngang.png"
-              alt="HUNG PHUC Logo"
+              alt="Hưng Phúc - Thiết kế & thi công xây dựng"
               width={248}
               height={80}
               style={{ width: '100%', height: 'auto' }}
@@ -31,7 +31,7 @@ export function Header() {
           </Link>
 
           {/* Desktop Navigation */}
-          <nav className="hidden lg:flex items-center space-x-6">
+          <nav className="hidden lg:flex items-center space-x-6" aria-label="Điều hướng chính">
             {PUBLIC_NAV_ITEMS.map((item) => (
               <Link
                 key={item.href}
@@ -49,15 +49,23 @@ export function Header() {
           </nav>
 
           {/* Mobile Menu Button */}
-          <Button variant="ghost" size="icon" className="lg:hidden" onClick={() => setIsMenuOpen(!isMenuOpen)}>
-            {isMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+          <Button
+            variant="ghost"
+            size="icon"
+            className="lg:hidden"
+            onClick={() => setIsMenuOpen(!isMenuOpen)}
+            aria-label={isMenuOpen ? "Đóng menu" : "Mở menu điều hướng"}
+            aria-expanded={isMenuOpen}
+            aria-controls="mobile-navigation"
+          >
+            {isMenuOpen ? <X className="h-6 w-6" aria-hidden /> : <Menu className="h-6 w-6" aria-hidden />}
           </Button>
         </div>
 
         {/* Mobile Navigation */}
         {isMenuOpen && (
-          <div className="lg:hidden border-t border-border py-4">
-            <nav className="flex flex-col space-y-4">
+          <div id="mobile-navigation" className="lg:hidden border-t border-border py-4">
+            <nav className="flex flex-col space-y-4" aria-label="Điều hướng di động">
               {PUBLIC_NAV_ITEMS.map((item) => (
                 <Link
                   key={item.href}

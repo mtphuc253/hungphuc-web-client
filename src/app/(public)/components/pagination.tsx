@@ -57,6 +57,7 @@ export function Pagination({ totalPages, currentPage, onPageChange }: Pagination
         size="icon"
         onClick={() => onPageChange(currentPage - 1)}
         disabled={currentPage === 1}
+        aria-label="Trang trước"
       >
         <ChevronLeft className="h-4 w-4" />
       </Button>
@@ -79,6 +80,7 @@ export function Pagination({ totalPages, currentPage, onPageChange }: Pagination
         size="icon"
         onClick={() => onPageChange(currentPage + 1)}
         disabled={currentPage === totalPages}
+        aria-label="Trang sau"
       >
         <ChevronRight className="h-4 w-4" />
       </Button>

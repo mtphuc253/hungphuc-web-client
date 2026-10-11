@@ -86,6 +86,7 @@ export interface ContactFormPayload {
   phone: string;
   address: string;
   message: string;
+  source?: string;
 }
 
 export type ContactStatus = "new" | "in_progress" | "resolved" | "archived"

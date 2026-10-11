@@ -1,7 +1,9 @@
-import React from "react";
+import type { Metadata } from "next";
+import { ProjectEditor } from "@/components/admin/project-editor";
 
-const Page = ({ params }: { params: { id: string } }) => {
-  return <div>Chi tiết dự án thiết kế: {params.id}</div>;
-};
+export const metadata: Metadata = { title: "Chỉnh sửa dự án" };
 
-export default Page;
+export default async function Page({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params;
+  return <ProjectEditor category="architecture" id={id} />;
+}

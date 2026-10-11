@@ -43,8 +43,9 @@ export function LoginForm() {
         // Hiển thị thông báo thành công
         toast.success(response.data.message || 'Đăng nhập thành công!');
 
-        // Chuyển hướng đến trang admin
-        router.push('/thong-ke');
+        // Quay lại trang admin đang mở trước đó (nếu có), mặc định về dashboard
+        const next = new URLSearchParams(window.location.search).get('next');
+        router.replace(next && next.startsWith('/') && !next.startsWith('//') ? next : '/thong-ke');
       } else {
         toast.error(response.data.message || 'Đăng nhập thất bại!');
       }

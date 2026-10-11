@@ -6,7 +6,6 @@ import { useSelector } from "react-redux"
 import type { RootState } from "@/store"
 import { PUBLIC_NAV_ITEMS } from "@/lib/constants"
 import { MapPin, Phone, Mail, ArrowUpRight } from "lucide-react"
-import Script from "next/script"
 
 export function Footer() {
   const settingsArray = useSelector((state: RootState) => state.settings.settings)
@@ -20,44 +19,18 @@ export function Footer() {
 
 
   const quickLinks = PUBLIC_NAV_ITEMS.slice(0, 5)
+  // Chỉ trỏ tới các trang có thật (tránh link hỏng 404 ảnh hưởng SEO)
   const operationLinks = [
-    { label: "Thiết Kế Kiến Trúc", href: "/architecture" },
-    { label: "Thi Công Xây Dựng", href: "/construction" },
-    { label: "Tư Vấn Đầu Tư", href: "/consulting" },
-    { label: "Sửa Chữa & Cải Tạo", href: "/renovation" },
-    { label: "Xin Phép Xây Dựng", href: "/licensing" },
+    { label: "Thiết Kế Kiến Trúc", href: "/thiet-ke-kien-truc" },
+    { label: "Thi Công Xây Dựng", href: "/thi-cong-xay-dung" },
+    { label: "Dự Toán Chi Phí", href: "/du-toan" },
+    { label: "Bảng Giá", href: "/bang-gia" },
+    { label: "Tư Vấn & Báo Giá", href: "/lien-lac" },
   ]
 
-  const organizationSchema = {
-    "@context": "https://schema.org",
-    "@type": "Organization",
-    name: "Công ty TNHH Tư vấn Đầu tư Xây dựng Hưng Phúc",
-    alternateName: "HPHC CO.,LTD",
-    url: "https://www.yourwebsite.com", // Replace with your actual domain
-    logo: "https://res.cloudinary.com/dizk1uwv3/image/upload/v1758561417/Hungphuc/logo-hung-phuc-ngang.png",
-    contactPoint: {
-      "@type": "ContactPoint",
-      telephone: settings?.phone || "",
-      contactType: "customer service",
-      email: settings?.email || "",
-    },
-    address: {
-      "@type": "PostalAddress",
-      streetAddress: settings?.address || "",
-      addressLocality: "Thành phố Hồ Chí Minh", // Or more specific locality
-      addressRegion: "VN-SG",
-      postalCode: "700000",
-      addressCountry: "VN",
-    },
-  }
 
   return (
     <>
-      <Script
-        id="organization-schema"
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationSchema) }}
-      />
       <footer className="relative text-white min-h-[600px] overflow-hidden">
         <div
           className="absolute inset-0 bg-cover bg-center bg-no-repeat"
@@ -232,14 +205,14 @@ export function Footer() {
           <div className="relative container mx-auto px-6 py-8">
             <div className="flex flex-col md:flex-row items-center justify-between space-y-4 md:space-y-0">
               <p className="text-gray-400 text-center md:text-left">
-                Copyright © 2025 <span className="text-white font-semibold">HPHC CO.,LTD</span> All rights reserved.
+                Copyright © {new Date().getFullYear()} <span className="text-white font-semibold">HPHC CO.,LTD</span> All rights reserved.
               </p>
               <div className="flex items-center space-x-6 text-sm text-gray-400">
-                <Link href="/privacy" className="hover:text-white transition-colors">
-                  Chính sách bảo mật
+                <Link href="/lien-lac" className="hover:text-white transition-colors">
+                  Liên hệ
                 </Link>
-                <Link href="/terms" className="hover:text-white transition-colors">
-                  Điều khoản sử dụng
+                <Link href="/du-toan" className="hover:text-white transition-colors">
+                  Dự toán chi phí
                 </Link>
               </div>
             </div>
