@@ -42,7 +42,7 @@ export type SiteSettings = Record<string, string>;
 export async function getSiteSettings(): Promise<SiteSettings> {
   if (!API_URL) return {};
   try {
-    const res = await fetch(`${API_URL}/api/settings`, { next: { revalidate: 300 } });
+    const res = await fetch(`${API_URL}/api/settings`, { next: { revalidate: 300 }, signal: AbortSignal.timeout(15000) });
     if (!res.ok) return {};
     const json = await res.json();
     const rows: { key: string; value: string }[] = Array.isArray(json?.data) ? json.data : [];
@@ -56,7 +56,8 @@ export async function getSiteSettings(): Promise<SiteSettings> {
 export async function apiGet<T>(path: string, revalidate = 300): Promise<T | null> {
   if (!API_URL) return null;
   try {
-    const res = await fetch(`${API_URL}${path}`, { next: { revalidate } });
+    // Timeout để build không bị treo khi backend đang khởi động lại
+    const res = await fetch(`${API_URL}${path}`, { next: { revalidate }, signal: AbortSignal.timeout(15000) });
     if (!res.ok) return null;
     return (await res.json()) as T;
   } catch {
